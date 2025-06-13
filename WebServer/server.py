@@ -3,21 +3,22 @@ from socket import *
 import sys
 
 def run_server(port):
+    # create a TCP socket
     server_socket = socket(AF_INET, SOCK_STREAM)
-    server_socket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1) # reuse address
+    server_socket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1) # allow reuse addr
     server_socket.bind(('', port))
-    server_socket.listen(1) # keep at most 1 connection in queue
-    print(f"Server is running on port {port}...")
+    server_socket.listen(10)  # at most 10 connections in queue
+    print(f"Server is listening on port {port}...")
 
     while True:
         try:
             # accept connection
-            conn, addr = server_socket.accept()
-            print(f"Connection established with {addr}")
+            connection, addr = server_socket.accept()
+            print(f"Accept connection from addr {addr}")
 
-            # receive data
-            request = conn.recv(1024).decode()
-            print(f"Received data: {request}")
+            # parse request
+            request = connection.recv(1024).decode()
+            print(f"Received data:\n{request}")
 
             # parse data and read
             # e.g. GET /HelloWolrd HTTP/1.1
@@ -35,16 +36,12 @@ def run_server(port):
                 "Content-Type: text/html\r\n"
                 "\r\n"
             )
-            conn.send(header.encode())
+            connection.send(header.encode())
             
             for line in data.splitlines():
-                conn.send((line + "\r\n").encode())
+                connection.send((line + "\r\n").encode())
             print("Data sent successfully.")
-            
-            # close connection
-            conn.close()
-            print(f"Connection with {addr} closed.")
-
+    
         except IOError:
             # File not found
             error_resp = (
@@ -53,11 +50,15 @@ def run_server(port):
                 "\r\n"
                 "<html><body><h1>404 Not Found</h1></body></html>\r\n"
             )
-            conn.send(error_resp.encode())
-            conn.close()
+            connection.send(error_resp.encode())
+            connection.close()
             print("File not found, sent 404 response.")
+        finally:
+            # close connection
+            connection.close()   
+            print(f"Connection with {addr} closed.")
+            
 
-    sys.exit(0)
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:

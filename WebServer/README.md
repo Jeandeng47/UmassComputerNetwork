@@ -1,32 +1,125 @@
-**Lab1: Single-Threaded Python Web Server**
-A minimal HTTP/1.1 server that serves files from its working directory over TCP.
+# Lab 1: Python Web Server & Minimal HTTP Client
 
-**Features**
+A lightweight HTTP/1.1 web server (single-threaded and multithreaded variants) and a matching command-line HTTP client in Python. This lab illustrates basic TCP socket programming, HTTP message formats, and concurrent request handling.
 
-* Listens on a user-specified port
-* Handles one client at a time
-* Serves existing files with a “200 OK” + `Content-Type: text/html`
-* Returns “404 Not Found” for missing files (including `/favicon.ico`)
-* Prints each request and its outcome to the console
+---
 
-**Requirements**
+## Overview
 
-* Python 3.x
+- **Single-Threaded Server (`server.py`)**  
+  - Listens on a user-specified TCP port  
+  - Handles one client at a time (no concurrency)  
+  - Serves static `.html` files from the working directory  
+  - Returns `200 OK` with `Content-Type: text/html` for existing files  
+  - Returns `404 Not Found` for missing files (including `/favicon.ico`)  
+  - Logs each request and response status to the console  
 
-**Usage**
+- **Multithreaded Server (`server_threaded.py`)**  
+  - Listens on a user-specified TCP port  
+  - Spawns a new thread for each connection to handle multiple clients concurrently  
+  - Same request/response behavior as the single-threaded server  
 
-1. Put `server.py` and any `.html` files (e.g. `HelloWorld.html`) in the same folder.
-2. (Optional) add a `favicon.ico` if you want to avoid 404s on icon requests.
-3. From that folder, run:
+- **HTTP Client (`client.py`)**  
+  - Connects to a server over TCP  
+  - Sends an HTTP `GET` request for a specified file  
+  - Displays the raw HTTP response (headers + body)  
 
+---
+
+## Requirements
+
+- Python 3.x  
+- ApacheBench 2.x
+
+---
+
+## Installation
+
+1. **Clone or download** this project directory to your local machine.  
+2. **Verify Python 3** is installed:  
+   ```bash
+   python3 --version
+   ```  
+3. (optional) Verify ApacheBench is installed:
+   ```bash
+   ab -V
+   ```  
+
+---
+
+## Usage
+
+### 1. Single-Threaded Server (`server.py`)
+
+1. Open a terminal in this directory.  
+2. Run:  
    ```bash
    python3 server.py <port>
+   ```  
+   Example:  
+   ```bash
+   python3 server.py 6789
+   ```  
+3. The console will display:  
    ```
-4. In your browser (or via `curl`), navigate to:
+   Server is listening on port 6789...
+   ```  
+4. Stop the server with `Ctrl+C`.
 
+### 2. HTTP Client (`client.py`)
+
+1. Open a new terminal in this directory.  
+2. Run:  
+   ```bash
+   python3 client.py <host> <port> <filename>
+   ```  
+   Example:  
+   ```bash
+   python3 client.py localhost 6789 HelloWorld.html
+   ```  
+3. The raw HTTP response (headers and HTML) will be printed to your console.
+
+### 3. Multithreaded Server (`server_threaded.py`)
+
+1. Open a terminal in this directory.  
+2. Run:  
+   ```bash
+   python3 server_threaded.py <port>
+   ```  
+   Example:  
+   ```bash
+   python3 server_threaded.py 6789
+   ```  
+3. The console will display:  
    ```
-   http://localhost:<port>/<filename>.html
-   ```
+   Multithreaded server listening on port 6789...
+   ```  
+4. Stop with `Ctrl+C`. 
 
-5. To stop the server, press **Ctrl-C** in the terminal.
+### 4. Methods to Request
 
+- **Browser:** navigate to  
+  ```
+  http://localhost:<port>/HelloWorld.html
+  ```  
+- **curl:**  
+  ```bash
+  curl http://localhost:<port>/HelloWorld.html
+  ```
+- **ApacheBench**: for concurrency test
+  ```bash
+  ab -n <num_of_requests> -c <concurrency_level> http://localhost:<port>/HelloWorld.html
+  ```
+---
+
+## ⚠️ Notes
+
+- Servers use plain HTTP (no TLS/HTTPS).  
+- Only the `GET` method is supported.  
+- `server.py` is single-threaded; `server_threaded.py` supports concurrency.
+
+---
+
+## 📄 License
+
+This project is provided for educational purposes only.
