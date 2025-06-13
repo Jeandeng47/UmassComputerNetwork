@@ -14,7 +14,7 @@ A lightweight HTTP/1.1 web server (single-threaded and multithreaded variants) a
   - Returns `404 Not Found` for missing files (including `/favicon.ico`)  
   - Logs each request and response status to the console  
 
-- **Multithreaded Server (`server_threaded.py`)**  
+- **Multithreaded Server (`multithreaded_server.py`)**  
   - Listens on a user-specified TCP port  
   - Spawns a new thread for each connection to handle multiple clients concurrently  
   - Same request/response behavior as the single-threaded server  
@@ -79,16 +79,16 @@ A lightweight HTTP/1.1 web server (single-threaded and multithreaded variants) a
    ```  
 3. The raw HTTP response (headers and HTML) will be printed to your console.
 
-### 3. Multithreaded Server (`server_threaded.py`)
+### 3. Multithreaded Server (`multithreaded_server.py`)
 
 1. Open a terminal in this directory.  
 2. Run:  
    ```bash
-   python3 server_threaded.py <port>
+   python3 multithreaded_server.py <port>
    ```  
    Example:  
    ```bash
-   python3 server_threaded.py 6789
+   python3 multithreaded_server.py 6789
    ```  
 3. The console will display:  
    ```
@@ -116,7 +116,7 @@ A lightweight HTTP/1.1 web server (single-threaded and multithreaded variants) a
 
 - Servers use plain HTTP (no TLS/HTTPS).  
 - Only the `GET` method is supported.  
-- `server.py` is single-threaded; `server_threaded.py` supports concurrency.
+- `server.py` is single-threaded; `multithreaded_server.py` supports concurrency.
 
 ---
 
